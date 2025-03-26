@@ -1,88 +1,13 @@
-import { useState, useEffect } from 'react';
 import TodoList from './components/TodoList';
 import AddTodo from './components/AddTodo';
 import { ListTodo, Sun, Moon } from 'lucide-react';
-
-interface Todo {
-  id: number;
-  text: string;
-  description: string; 
-  completed: boolean;
-}
+import { useTodoStore } from './store/TodoStore';
+import { useThemeStore } from './store/ThemeStore'; 
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    //const saved = localStorage.getItem('todos');
-    //return saved ? JSON.parse(saved) : [
-      return [
-      { 
-        id: 1, 
-        text: 'lorem ipsum', 
-        description: "Lorem ipsum dolor sit amet consectetur.", 
-        completed: true 
-      },
-      { 
-        id: 2, 
-        text: 'lorem ipsum', 
-        description: "Lorem ipsum dolor sit, amet consectetur adipisicing.", 
-        completed: false 
-      },
-      { 
-        id: 3, 
-        text: "Lorem, ipsum dolor.", 
-        description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. In, similique!", 
-        completed: false 
-      },
-    ];
-  });
-
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return document.documentElement.getAttribute('data-bs-theme') === 'dark';
-  });
-
-  useEffect(() => {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }, [todos]);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-bs-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
-
-  const addTodo = (text: string, description: string) => {
-    setTodos([
-      ...todos,
-      {
-        id: Date.now(),
-        text,
-        description,
-        completed: false,
-      },
-    ]);
-  };
-
-  const toggleComplete = (id: number) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
-  };
-
-  const removeTodo = (id: number) => {
-    setTodos(todos.filter((todo) => todo.id !== id));
-  };
-
-  const editTodo = (id: number, newText: string, newDescription: string) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === id ? { ...todo, text: newText, description: newDescription } : todo
-      )
-    );
-  };
-
-  const completedCount = todos.filter((todo) => todo.completed).length;
-  const totalCount = todos.length;
-  const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+  // States from stores
+  const { todos, completedCount, totalCount, progressPercentage } = useTodoStore();
+  const { isDarkMode, toggleTheme } = useThemeStore();
 
   return (
     <div className="min-vh-100 py-5">
@@ -97,7 +22,7 @@ function App() {
                     <h1 className="h3 mb-0">My Todo List</h1>
                   </div>
                   <div
-                    onClick={() => setIsDarkMode(!isDarkMode)}
+                    onClick={toggleTheme}
                     className="theme-toggle"
                   >
                     {isDarkMode ? (
@@ -108,7 +33,7 @@ function App() {
                   </div>
                 </div>
 
-                <AddTodo onAddTodo={addTodo} />
+                <AddTodo />
 
                 <div className="mt-4">
                   {todos.length === 0 ? (
@@ -120,12 +45,7 @@ function App() {
                     </div>
                   ) : (
                     <>
-                      <TodoList
-                        todos={todos}
-                        onToggleComplete={toggleComplete}
-                        onRemoveTodo={removeTodo}
-                        onEditTodo={editTodo}
-                      />
+                      <TodoList />
                       <div className="mt-4">
                         <div className="d-flex justify-content-between align-items-center mb-2">
                           <small className="text-muted">Progress</small>

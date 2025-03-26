@@ -1,32 +1,19 @@
 import React, { useState } from 'react';
 import { Check, Trash2, Edit2, X, Save, ChevronDown, ChevronRight } from 'lucide-react';
+import { useTodoStore } from '../store/TodoStore';
 
-interface Todo {
-  id: number;
-  text: string;
-  description: string;
-  completed: boolean;
-}
-
-interface TodoListProps {
-  todos: Todo[];
-  onToggleComplete: (id: number) => void;
-  onRemoveTodo: (id: number) => void;
-  onEditTodo: (id: number, newText: string, newDescription: string) => void;
-}
-
-const TodoList: React.FC<TodoListProps> = ({ 
-  todos, 
-  onToggleComplete, 
-  onRemoveTodo,
-  onEditTodo 
-}) => {
+const TodoList: React.FC = () => {
+  // States
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState<string>('');
   const [editDescription, setEditDescription] = useState<string>('');
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
-  const startEditing = (todo: Todo) => {
+  // Store
+  const { todos, toggleComplete, removeTodo, editTodo } = useTodoStore();
+
+  // Functions
+  const startEditing = (todo: { id: number; text: string; description: string }) => {
     setEditingId(todo.id);
     setEditText(todo.text);
     setEditDescription(todo.description || '');
@@ -40,7 +27,7 @@ const TodoList: React.FC<TodoListProps> = ({
 
   const saveEdit = (id: number) => {
     if (editText.trim()) {
-      onEditTodo(id, editText.trim(), editDescription.trim());
+      editTodo(id, editText.trim(), editDescription.trim());
       setEditingId(null);
       setEditText('');
       setEditDescription('');
@@ -48,13 +35,15 @@ const TodoList: React.FC<TodoListProps> = ({
   };
 
   const toggleDescription = (id: number) => {
-    const newExpandedIds = new Set(expandedIds);
-    if (expandedIds.has(id)) {
-      newExpandedIds.delete(id);
-    } else {
-      newExpandedIds.add(id);
-    }
-    setExpandedIds(newExpandedIds);
+    setExpandedIds(prevIds => {
+      const newIds = new Set(prevIds);
+      if (prevIds.has(id)) {
+        newIds.delete(id);
+      } else {
+        newIds.add(id);
+      }
+      return newIds;
+    });
   };
 
   return (
@@ -130,7 +119,7 @@ const TodoList: React.FC<TodoListProps> = ({
                 </div>
                 <div className="todo-actions d-flex gap-2">
                   <button
-                    onClick={() => onToggleComplete(todo.id)}
+                    onClick={() => toggleComplete(todo.id)}
                     className={`btn btn-sm ${
                       todo.completed ? 'btn-success' : 'btn-outline-success'
                     }`}
@@ -146,7 +135,7 @@ const TodoList: React.FC<TodoListProps> = ({
                     <Edit2 size={16} />
                   </button>
                   <button
-                    onClick={() => onRemoveTodo(todo.id)}
+                    onClick={() => removeTodo(todo.id)}
                     className="btn btn-sm btn-outline-danger"
                     aria-label="Remove todo"
                   >

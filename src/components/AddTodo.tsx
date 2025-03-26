@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTodoStore } from '../store/TodoStore';
 
-interface AddTodoProps { 
-  onAddTodo: (text: string, description: string) => void;
-}
-
-const AddTodo: React.FC<AddTodoProps> = ({ onAddTodo }) => {
+const AddTodo: React.FC = () => {
+  // States
   const [text, setText] = useState('');
   const [description, setDescription] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Store
+  const { addTodo } = useTodoStore();
+
+  // Functions
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (text.trim()) {
-      onAddTodo(text.trim(), description.trim());
+      addTodo(text.trim(), description.trim());
       setText('');
       setDescription('');
       setIsExpanded(false);
@@ -33,7 +35,7 @@ const AddTodo: React.FC<AddTodoProps> = ({ onAddTodo }) => {
         <button
           type="button"
           className="btn btn-outline-secondary"
-          onClick={() => setIsExpanded(!isExpanded)}
+          onClick={() => setIsExpanded(prevState => !prevState)}
         >
           {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </button>
