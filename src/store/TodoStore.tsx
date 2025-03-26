@@ -27,7 +27,7 @@ export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return [
         { 
             id: 1, 
-            text: 'lorem ipsum', 
+            text: 'lorem ipsumeee', 
             description: "Lorem ipsum dolor sit amet consectetur.", 
             completed: true 
           },
