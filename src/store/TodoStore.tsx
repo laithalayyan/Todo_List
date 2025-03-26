@@ -22,26 +22,27 @@ const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
 export const TodoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem('todos');
-    return saved ? JSON.parse(saved) : [
-      { 
-        id: 1, 
-        text: 'Learn React Props', 
-        description: 'Study how to pass data between components using props, including children props and prop types', 
-        completed: true 
-      },
-      { 
-        id: 2, 
-        text: 'Master React State', 
-        description: 'Deep dive into useState and useEffect hooks, including state management best practices', 
-        completed: false 
-      },
-      { 
-        id: 3, 
-        text: 'Build Todo App', 
-        description: 'Create a fully functional todo application with features like adding, editing, and deleting todos', 
-        completed: false 
-      },
+    // const saved = localStorage.getItem('todos');
+    // return saved ? JSON.parse(saved) : [
+    return [
+        { 
+            id: 1, 
+            text: 'lorem ipsum', 
+            description: "Lorem ipsum dolor sit amet consectetur.", 
+            completed: true 
+          },
+          { 
+            id: 2, 
+            text: 'lorem ipsum', 
+            description: "Lorem ipsum dolor sit, amet consectetur adipisicing.", 
+            completed: false 
+          },
+          { 
+            id: 3, 
+            text: "Lorem, ipsum dolor.", 
+            description: "Lorem ipsum dolor sit amet consectetur, adipisicing elit. In, similique!", 
+            completed: false 
+          },
     ];
   });
 
